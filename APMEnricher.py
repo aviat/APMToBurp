@@ -23,7 +23,7 @@ from java.awt import Desktop
 import random
 import sys
 
-EXTNAME = "PTOS"
+EXTNAME = "APMEnricher"
 DEFAULT_COOKIE = "<insert your Datadog cookie here>"
 BASE_URI = "https://app.datadoghq.com/apm/trace/%s"
 
@@ -64,7 +64,10 @@ class BurpExtender(IBurpExtender, ITab):
         context._helpers = callbacks.getHelpers()
         callbacks.registerContextMenuFactory(context)
 
-        callbacks.addSuiteTab(self)
+        # The extension tab will only be needed if we need to query Datadog
+        # directly from Burp Suite:
+
+        # callbacks.addSuiteTab(self)
 
         return
 

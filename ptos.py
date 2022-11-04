@@ -5,6 +5,8 @@ from burp import IContextMenuFactory
 from burp import ITab
 
 import java.util.ArrayList
+import java.net.URI
+
 
 from javax.swing import BoxLayout
 from javax.swing import JLabel
@@ -16,12 +18,15 @@ from javax.swing import JMenuItem
 from javax.swing import JScrollPane
 
 from java.awt import Component, GridLayout
+from java.awt import Desktop
 
 import random
 import sys
 
 EXTNAME = "PTOS"
 DEFAULT_COOKIE = "<insert your Datadog cookie here>"
+BASE_URI = "https://app.datadoghq.com/apm/trace/%s"
+
 class BurpExtender(IBurpExtender, ITab):
     def registerExtenderCallbacks(self, callbacks):
     # your extension code here
@@ -55,6 +60,7 @@ class BurpExtender(IBurpExtender, ITab):
         self.add_apm_info("blah")
 
         context = APMContextMenu()
+        context.desktop = Desktop.getDesktop()
         context._helpers = callbacks.getHelpers()
         callbacks.registerContextMenuFactory(context)
 
@@ -121,6 +127,10 @@ class APMContextMenu(IContextMenuFactory):
         print("clicked '%s'" % str(event))
         print("trace_id = %s" % self.trace_id)
 
+        uri = BASE_URI % self.trace_id
+        print("opening %s" % uri)
+        self.desktop.browse(java.net.URI(uri))
+
 
 class APMProxyListener(IProxyListener):
 
@@ -174,7 +184,7 @@ def get_header_by_name(name, headers):
             ary = h.split(":")
             k = ary[0]
             if k.lower() == l_name:
-                return ":".join(ary[1:])
+                return ":".join(ary[1:]).strip()
 
 
 def get_url(headers):

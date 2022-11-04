@@ -1,6 +1,7 @@
 
 from burp import IBurpExtender
 from burp import IProxyListener
+from burp import IContextMenuFactory
 from burp import ITab
 
 import java.util.ArrayList
@@ -11,6 +12,7 @@ from javax.swing import JPanel
 from javax.swing import JTable
 from javax.swing import JTextField
 from javax.swing import JTextArea
+from javax.swing import JMenuItem
 from javax.swing import JScrollPane
 
 from java.awt import Component, GridLayout
@@ -52,6 +54,10 @@ class BurpExtender(IBurpExtender, ITab):
         self.add_apm_info("yoyo")
         self.add_apm_info("blah")
 
+        context = APMContextMenu()
+        context._helpers = callbacks.getHelpers()
+        callbacks.registerContextMenuFactory(context)
+
         callbacks.addSuiteTab(self)
 
         return
@@ -81,6 +87,40 @@ class BurpExtender(IBurpExtender, ITab):
 
     def getUiComponent(self):
         return self._pane
+
+class APMContextMenu(IContextMenuFactory):
+
+    def createMenuItems(self, invocation):
+        # returns [JMenuItem]
+
+        if invocation.getInvocationContext() == invocation.CONTEXT_MESSAGE_VIEWER_REQUEST:
+
+            messages = invocation.getSelectedMessages()
+            # [burp.IHttpRequestResponse, [burp.xxxxxxxxxxxx]]
+            if len(messages) == 0:
+                print("no msg")
+                return None
+            msg = messages[0]
+
+            request = msg.getRequest()
+
+            request_info = self._helpers.analyzeRequest(request)
+            # request_info IRequestInfo
+            headers = request_info.getHeaders()
+            trace_id = get_header_by_name("x-datadog-trace-id", headers)
+            if trace_id is None:
+                print("no trace_id")
+                return None
+            self.trace_id = trace_id
+
+            return [JMenuItem("Open in APM", actionPerformed=self.onClick)]
+        else:
+            return None
+
+    def onClick(self, event):
+        print("clicked '%s'" % str(event))
+        print("trace_id = %s" % self.trace_id)
+
 
 class APMProxyListener(IProxyListener):
 
@@ -126,14 +166,21 @@ def get_trace_id():
     return "".join(trace_id)
 
 
-def get_url(headers):
-    verb = headers[0]
+def get_header_by_name(name, headers):
+
+    l_name = name.lower()
     for h in headers[1:]:
         if ":" in h:
-            k, v = h.split(":")
-            if k.lower() == "host":
-                return "%s %s" % (verb, v)
-    return verb
+            ary = h.split(":")
+            k = ary[0]
+            if k.lower() == l_name:
+                return ":".join(ary[1:])
+
+
+def get_url(headers):
+    verb = headers[0]
+    host = get_header_by_name("host", headers)
+    return "%s %s" % (verb, host)
 
 
 """

@@ -161,7 +161,7 @@ class APMProxyListener(IProxyListener):
 
         trace_id = get_trace_id()
         parent_id = get_trace_id()
-        headers2 = headers + [u"x-datadog-origin: rum",
+        headers2 = headers + [u"x-datadog-origin: burpsuite",
                               u"x-datadog-parent-id: %s" % parent_id,
                               u"x-datadog-sampling-priority: 1",
                               u"x-datadog-trace-id: %s" % trace_id]

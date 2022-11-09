@@ -23,7 +23,7 @@ from java.awt import Desktop
 import random
 import sys
 
-EXTNAME = "APMEnricher"
+EXTNAME = "APMToBurp"
 DEFAULT_COOKIE = "<insert your Datadog cookie here>"
 BASE_URI = "https://app.datadoghq.com/apm/trace/%s"
 

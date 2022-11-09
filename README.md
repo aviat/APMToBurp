@@ -1,5 +1,5 @@
 
-# BurpAPMEnricher
+# APMToBurp
 
 
 ## What is this?
@@ -19,7 +19,7 @@ Using it should be straightforward. In a running Burp Suite, go to:
   - then Extensions tab
   - click the Add button
   - in the new window, change Extension Type to Python
-  - choose `APMEnricher.py` from this repository
+  - choose `APMToBurp.py` from this repository
   - click Next
   - click Close
 
@@ -31,7 +31,7 @@ request.
 
 The contextual menu will display:
 
-  _Extensions_ -> _APMEnricher_ -> _Open in APM_
+  _Extensions_ -> _APMToBurp-> _Open in APM_
 
 Click _Open in APM_ and the trace will show up in your default browser.
 

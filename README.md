@@ -14,7 +14,21 @@ This project is licensed under the terms of the MIT license.
 
 ## Installing
 
-Using it should be straightforward. In a running Burp Suite, go to:
+### Enable Python extension in Burp Suite
+
+First [download Jython](https://www.jython.org/download.html) locally (this
+enables running Python application with Burp). Then specify the JAR path in the
+_Python Environment_ section of Burp Suite:
+
+In a running Burp Suite, go to:
+  - Extender tab
+  - then Options tab
+  - then add the Jython standalone JAR path in the "Location of Jython
+    standalone JAR file" textbox
+
+### Enable APMToBurp extension
+
+In a running Burp Suite, go to:
   - Extender tab
   - then Extensions tab
   - click the Add button
